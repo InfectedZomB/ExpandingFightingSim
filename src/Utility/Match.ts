@@ -35,7 +35,7 @@ export class Match implements Resettable, Stringable {
      */
     set contestants(value: Killable[]) {
         this._contestants = value;
-        this.initialize();
+        if(this.livingContestants.length < 2) this.finish();
     }
 
     /**
@@ -67,7 +67,10 @@ export class Match implements Resettable, Stringable {
     public initialize() {
         let livingContestants = 0;
         for(let contestant of this.contestants) if(contestant.alive) livingContestants++;
-        if(livingContestants >= 2) this.finished = false;
+        if(livingContestants >= 2) {
+            this.finished = false;
+            this.randomizeContestantOrder();
+        }
         else {
             this.finish();
             console.log(`Cannot start a match between only ${livingContestants} living contestant(s).`)
@@ -135,6 +138,22 @@ export class Match implements Resettable, Stringable {
         if(this.winner != null) console.log(`The winner is:\n${this.winner instanceof Fighter ?
             ((this.winner as Fighter).name.fullName() + "\n") : this.winner.toString()}`);
         else console.log("No winner.");
+    }
+
+    /**
+     * Randomizes the order of the match.
+     * @private No use for function outside of this class.
+     */
+    private randomizeContestantOrder() {
+        let contestants = [...this.contestants];
+        let randomizedContestants: Killable[] = [];
+        let index: number;
+        while(contestants.length > 0) {
+            index = Math.floor(Math.random() * contestants.length);
+            randomizedContestants.push(contestants[index]);
+            contestants.splice(index, 1);
+        }
+        this.contestants = randomizedContestants;
     }
 
 }
