@@ -163,23 +163,10 @@ export class Name implements Stringable {
     }
 
     /**
-     * Returns the full name, ignoring the nick-name.
-     */
-    public fullName(): string {
-        if(this.middleNames.length == 0) return `${this.firstName} ${this.lastName}`;
-        let middleNames = "";
-        for(let i = 0; i < this.middleNames.length; i++) {
-            middleNames += this.middleNames[i];
-            middleNames += " ";
-        }
-        return `${this.firstName} ${middleNames}${this.lastName}`;
-    }
-
-    /**
-     * Returns the full name, including the nick-name.
+     * Returns the full name, including the nick-name and all middle names.
      */
     public toString(): string {
-        if(this.firstName === this.nickName) return this.fullName();
+        if(this.firstName === this.nickName) return `${this.firstName} ${this.lastName}`;
         else {
             if(this.middleNames.length == 0) return `${this.firstName} \"${this.nickName}\" ${this.lastName}`;
             let middleNames = "";
