@@ -55,7 +55,7 @@ export class Fighter extends Killable {
     public kill() {
         if(this.alive) {
             this.alive = false;
-            console.log(`${this.name.fullName()} has died.`);
+            console.log(`${this.name.preferredName} has died.`);
         }
     }
 

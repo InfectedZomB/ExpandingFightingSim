@@ -51,8 +51,8 @@ export class Match implements Resettable, Stringable {
             if(this.livingContestants.length >= 2) {
                 let attacker = this.livingContestants[this.turn % this.livingContestants.length];
                 let defender = this.livingContestants[(this.turn + 1) % this.livingContestants.length];
-                let attName = attacker instanceof Fighter ? ((attacker as Fighter).name.fullName() + "\n") : attacker.toString();
-                let defName = defender instanceof Fighter ? ((defender as Fighter).name.fullName() + "\n") : defender.toString();
+                let attName = attacker instanceof Fighter ? ((attacker as Fighter).name.preferredName + "\n") : typeof attacker;
+                let defName = defender instanceof Fighter ? ((defender as Fighter).name.preferredName + "\n") : typeof defender;
                 console.log(`${attName}-has attacked-\n${defName}`);
                 attacker.attack(defender);
                 this.turn++;
@@ -136,7 +136,7 @@ export class Match implements Resettable, Stringable {
     private finish() {
         this.finished = true;
         if(this.winner != null) console.log(`The winner is:\n${this.winner instanceof Fighter ?
-            ((this.winner as Fighter).name.fullName() + "\n") : this.winner.toString()}`);
+            ((this.winner as Fighter).name.preferredName + "\n") : this.winner.toString()}`);
         else console.log("No winner.");
     }
 
