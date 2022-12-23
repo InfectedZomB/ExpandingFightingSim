@@ -2,6 +2,7 @@ import {Killable} from "./Killable";
 import {Resettable} from "./Resettable";
 import {Stringable} from "./Stringable";
 import {Fighter} from "../Entities/Fighter";
+import {Monster} from "../Entities/Monster";
 
 /**
  * Class for managing {@link Match}es between {@link Killable} entities.
@@ -54,9 +55,9 @@ export class Match implements Resettable, Stringable {
                 let attacker = this.livingContestants[this.turn % this.livingContestants.length];
                 let defender = this.livingContestants[(this.turn + 1) % this.livingContestants.length];
                 let attName = attacker instanceof Fighter ?
-                    ((attacker as Fighter).name.preferredName + "\n") : typeof attacker;
+                    ((attacker as Fighter).name.name + "\n") : ((attacker as Monster).name.name + "\n");
                 let defName = defender instanceof Fighter ?
-                    ((defender as Fighter).name.preferredName + "\n") : typeof defender;
+                    ((defender as Fighter).name.name + "\n") : ((defender as Monster).name.name + "\n");
                 console.log(`${attName}-has attacked-\n${defName}`);
                 attacker.attack(defender);
                 this.turn++;
@@ -140,7 +141,7 @@ export class Match implements Resettable, Stringable {
     private finish() {
         this.finished = true;
         if(this.winner != null) console.log(`The winner is:\n${this.winner instanceof Fighter ?
-            ((this.winner as Fighter).name.preferredName + "\n") : this.winner.toString()}`);
+            ((this.winner as Fighter).name.name + "\n") : ((this.winner as Monster).name.name + "\n")}`);
         else console.log("No winner.");
     }
 

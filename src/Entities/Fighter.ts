@@ -1,4 +1,4 @@
-import { Name } from "./Name";
+import { ComplexName } from "./Name/ComplexName";
 import { Killable } from "../Utility/Killable";
 
 /**
@@ -6,13 +6,13 @@ import { Killable } from "../Utility/Killable";
  */
 export class Fighter extends Killable {
 
-    private _name: Name;
+    private _name: ComplexName;
 
     /**
      * Creates a new {@link Object} of {@link Fighter} type.
-     * @param name The {@link Fighter}'s {@link Name}.
+     * @param name The {@link Fighter}'s {@link ComplexName}.
      */
-    public constructor(name: Name) {
+    public constructor(name: ComplexName) {
         super();
         this._name = name;
     }
@@ -20,7 +20,7 @@ export class Fighter extends Killable {
     /**
      * Returns the name of the fighter.
      */
-    get name(): Name {
+    get name(): ComplexName {
         return this._name;
     }
 
@@ -28,7 +28,7 @@ export class Fighter extends Killable {
      * Sets the name of the fighter.
      * @param value The new name of the fighter.
      */
-    set name(value: Name) {
+    set name(value: ComplexName) {
         this._name = value;
     }
 
@@ -46,7 +46,16 @@ export class Fighter extends Killable {
      * @param opponent The opponent attacked.
      */
     public attack(opponent: Killable) {
-        if(this.alive) opponent.kill();
+        if(this.alive) opponent.attacked(this);
+    }
+
+    /**
+     * Get attacked by an opponent.
+     * @param opponent The opponent who attacks.
+     * @param args Any added arguments to the attack.
+     */
+    public attacked(opponent: Killable, ...args) {
+        this.kill();
     }
 
     /**
@@ -55,7 +64,7 @@ export class Fighter extends Killable {
     public kill() {
         if(this.alive) {
             this.alive = false;
-            console.log(`${this.name.preferredName} has died.`);
+            console.log(`${this.name.name} has died.\n`);
         }
     }
 

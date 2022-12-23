@@ -1,12 +1,14 @@
-import {Name} from "./Entities/Name";
+import {ComplexName} from "./Entities/Name/ComplexName";
 import {Fighter} from "./Entities/Fighter";
 import {Match} from "./Utility/Match";
+import {Monster} from "./Entities/Monster";
 
-let zomb = new Fighter(new Name("Zackery", "Fisher", "ZomB"));
-let zeltar = new Fighter(new Name("Tim", "Marion", "Zeltar"));
-let metal = new Fighter(new Name("Jacob", "Dixon", "Metal"));
-let sol = new Fighter(new Name("Sigma", "Balls", "Sol"));
+let skeleton = new Monster("Skeleton", 2);
+let zomb = new Fighter(new ComplexName("Zackery", "Fisher", "ZomB"));
+let zeltar = new Fighter(new ComplexName("Tim", "Marion", "Zeltar"));
+let metal = new Fighter(new ComplexName("Jacob", "Dixon", "Metal"));
+let sol = new Fighter(new ComplexName("Sigma", "Balls", "Sol"));
 
-let match = new Match(zomb, zeltar, metal, sol);
+let match = new Match(zomb, zeltar, metal, sol, skeleton);
 
 while(!match.finished) match.nextTurn();

@@ -38,6 +38,13 @@ export abstract class Killable implements Resettable, Stringable {
     abstract attack(opponent: Killable);
 
     /**
+     * Get attacked by an opponent.
+     * @param opponent The opponent who attacks.
+     * @param args Any added arguments to the attack.
+     */
+    abstract attacked(opponent: Killable, ...args: any[]);
+
+    /**
      * Kills the Killable {@link Object}.
      */
     abstract kill();

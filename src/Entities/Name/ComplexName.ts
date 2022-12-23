@@ -1,10 +1,11 @@
-import {Stringable} from "../Utility/Stringable";
+import {Name} from "./Name";
 
 /**
  * Type to manage components of names.
  * name: The string name part of a name.
  * use: Whether the string name part should be used when displaying the name.
  */
+
 export type NameComponent = {
     name: string;
     use: boolean;
@@ -17,7 +18,7 @@ export type NameComponent = {
  *
  * Names consist of a string array of Middle names.
  */
-export class Name implements Stringable {
+export class ComplexName extends Name {
 
     private _firstName: NameComponent;
     private _lastName: NameComponent;
@@ -25,7 +26,7 @@ export class Name implements Stringable {
     private _middleNames: NameComponent[];
 
     /**
-     * Create an {@link Object} of {@link Name} type.
+     * Create an {@link Object} of {@link ComplexName} type.
      * @param firstName First name as a string or NameComponent.
      * @param lastName Last name as a string or NameComponent.
      * @param nickName Nick-name as a string or NameComponent (Optional).
@@ -33,6 +34,7 @@ export class Name implements Stringable {
      */
     public constructor(firstName: string | NameComponent, lastName: string | NameComponent,
                        nickName?: string | NameComponent, ...middleNames: string[] | NameComponent[]) {
+        super();
         typeof firstName == "string" ? this._firstName = {name: firstName, use: true} : this._firstName = firstName;
         typeof lastName == "string" ? this._lastName = {name: lastName, use: true} : this._lastName = lastName;
         typeof nickName == "string" ? this._nickName = {name: nickName, use: true} : this._nickName = nickName;
@@ -118,7 +120,7 @@ export class Name implements Stringable {
     /**
      * Returns the exact preferred name.
      */
-    get preferredName(): string {
+    public get name(): string {
         let names: string[] = []
         if(this.firstName.use) names.push(this.firstName.name);
         for(let name of this.middleNames) if(name.use) names.push(name.name);
