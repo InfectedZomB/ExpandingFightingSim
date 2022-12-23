@@ -26,7 +26,7 @@ export class Match implements Resettable, Stringable {
      * Returns the list of contestants in the match.
      */
     get contestants(): Killable[] {
-        return this._contestants;
+        return [...this._contestants];
     }
 
     /**
@@ -45,14 +45,18 @@ export class Match implements Resettable, Stringable {
         if(this.finished) {
             let winner: Killable | null;
             for(let contestant of this.contestants) if(contestant.alive) winner = contestant;
-            winner == null ? console.log("The match has already ended. No winners.") : console.log(`The match has already ended. Winner:\n${winner.toString()}`);
+            winner == null ?
+                console.log("The match has already ended. No winners.") :
+                console.log(`The match has already ended. Winner:\n${winner.toString()}`);
         }
         else {
             if(this.livingContestants.length >= 2) {
                 let attacker = this.livingContestants[this.turn % this.livingContestants.length];
                 let defender = this.livingContestants[(this.turn + 1) % this.livingContestants.length];
-                let attName = attacker instanceof Fighter ? ((attacker as Fighter).name.preferredName + "\n") : typeof attacker;
-                let defName = defender instanceof Fighter ? ((defender as Fighter).name.preferredName + "\n") : typeof defender;
+                let attName = attacker instanceof Fighter ?
+                    ((attacker as Fighter).name.preferredName + "\n") : typeof attacker;
+                let defName = defender instanceof Fighter ?
+                    ((defender as Fighter).name.preferredName + "\n") : typeof defender;
                 console.log(`${attName}-has attacked-\n${defName}`);
                 attacker.attack(defender);
                 this.turn++;
@@ -96,14 +100,14 @@ export class Match implements Resettable, Stringable {
     }
 
     /**
-     * Returns whether or not the match is finished.
+     * Returns whether the match is finished.
      */
     get finished(): boolean {
         return this._finished;
     }
 
     /**
-     * Sets whether or not the match is finished.
+     * Sets whether the match is finished.
      * @param value The new value.
      * @private No use outside of {@link Match} class.
      */
@@ -131,7 +135,7 @@ export class Match implements Resettable, Stringable {
 
     /**
      * Officially finish a match.
-     * @private No use for function outside of this class.
+     * @private No use for function outside this class.
      */
     private finish() {
         this.finished = true;
@@ -142,7 +146,7 @@ export class Match implements Resettable, Stringable {
 
     /**
      * Randomizes the order of the match.
-     * @private No use for function outside of this class.
+     * @private No use for function outside this class.
      */
     private randomizeContestantOrder() {
         let contestants = [...this.contestants];

@@ -1,18 +1,14 @@
 import {Stringable} from "../Utility/Stringable";
 
 /**
- * Enum for managing the types of preferred names available.
+ * Type to manage components of names.
+ * name: The string name part of a name.
+ * use: Whether the string name part should be used when displaying the name.
  */
-export enum PreferredName {
-    FIRST,
-    LAST,
-    NICK,
-    FULL,
-    MIDDLE,
-    FULL_NICK,
-    FULL_MIDDLE,
-    FULL_NICK_MIDDLE
-}
+export type NameComponent = {
+    name: string;
+    use: boolean;
+};
 
 /**
  * Class to give formal names to Fighters.
@@ -23,85 +19,88 @@ export enum PreferredName {
  */
 export class Name implements Stringable {
 
-    private _firstName: string;
-    private _lastName: string;
-    private _nickName: string;
-    private _middleNames: string[];
-    private _preferredName: PreferredName;
+    private _firstName: NameComponent;
+    private _lastName: NameComponent;
+    private _nickName: NameComponent;
+    private _middleNames: NameComponent[];
 
     /**
      * Create an {@link Object} of {@link Name} type.
-     * @param firstName First name as a string.
-     * @param lastName Last name as a string.
-     * @param nickName Nick-name as a string.
-     * @param preferred The preferred name classifier as a {@link PreferredName} enum type.
-     * @param middleNames List of Middle names as a string array.
+     * @param firstName First name as a string or NameComponent.
+     * @param lastName Last name as a string or NameComponent.
+     * @param nickName Nick-name as a string or NameComponent (Optional).
+     * @param middleNames List of Middle names as a string[] or NameComponent[] (Optional).
      */
-    public constructor(firstName: string, lastName: string, nickName?:string, preferred?: PreferredName, ...middleNames: string[]) {
-        this._firstName = firstName;
-        this._lastName = lastName;
-        this._nickName = nickName ?? firstName;
-        this._middleNames = middleNames;
-        this._preferredName = preferred ?? PreferredName.FULL;
+    public constructor(firstName: string | NameComponent, lastName: string | NameComponent,
+                       nickName?: string | NameComponent, ...middleNames: string[] | NameComponent[]) {
+        typeof firstName == "string" ? this._firstName = {name: firstName, use: true} : this._firstName = firstName;
+        typeof lastName == "string" ? this._lastName = {name: lastName, use: true} : this._lastName = lastName;
+        typeof nickName == "string" ? this._nickName = {name: nickName, use: true} : this._nickName = nickName;
+        if(middleNames.length > 0 && typeof middleNames[0] == "string") {
+            let nameCompArray: NameComponent[] = [];
+            for(let name of middleNames) nameCompArray.push({name: name as string, use: true});
+            this._middleNames = nameCompArray;
+        }
+        else this._middleNames = middleNames as NameComponent[];
     }
 
     /**
      * Returns the first name.
      */
-    get firstName(): string {
-        return this._firstName;
+    protected get firstName(): Readonly<NameComponent> {
+        return Object.freeze({...this._firstName});
     }
 
     /**
      * Sets the first name.
      * @param value New first name.
      */
-    set firstName(value: string) {
+    protected set firstName(value: NameComponent) {
         this._firstName = value;
     }
 
     /**
      * Returns the last name.
      */
-    get lastName(): string {
-        return this._lastName;
+    protected get lastName(): Readonly<NameComponent> {
+        return Object.freeze({...this._lastName});
     }
 
     /**
      * Sets the last name.
      * @param value New last name.
      */
-    set lastName(value: string) {
+    protected set lastName(value: NameComponent) {
         this._lastName = value;
     }
 
     /**
-     * Returns the nick-name.
+     * Returns the nickname.
      */
-    get nickName(): string {
-        return this._nickName;
+    protected get nickName(): Readonly<NameComponent> {
+        return Object.freeze({...this._nickName});
     }
 
     /**
-     * Sets the nick-name.
-     * @param value The new nick-name.
+     * Sets the nickname.
+     * @param value The new nickname.
      */
-    set nickName(value: string) {
+    protected set nickName(value: NameComponent) {
         this._nickName = value;
     }
 
     /**
      * Returns all the middle names as a string array.
      */
-    get middleNames(): string[] {
-        return this._middleNames;
+    protected get middleNames(): NameComponent[] {
+        return [...this._middleNames];
     }
 
     /**
      * Sets all the middle names.
      * @param value The new list of middle names.
      */
-    set middleNames(value: string[]) {
+    protected set middleNames(value: NameComponent[]) {
         this._middleNames = value;
     }
 
@@ -109,72 +108,49 @@ export class Name implements Stringable {
      * Returns the middle name at the index of the list.
      * @param index The index of the list.
      */
-    public middleName(index: number): string {
-        if (this.middleNames.length == 0) throw new RangeError(`No middle names exist for ${this.toString()}.`);
-        if (index < 0 || index >= this.middleNames.length) throw new RangeError(`Index ${index} is out of bounds of 0 - ${this.middleNames.length}`);
-        return this.middleNames[index];
-    }
-
-    /**
-     * Returns the section of preferred name classifier.
-     */
-    get preferredNameSection(): PreferredName {
-        return this._preferredName;
-    }
-
-    /**
-     * Set the preferred name classifier.
-     * @param value New preferred section.
-     */
-    set preferredNameSection(value: PreferredName) {
-        this._preferredName = value;
+    protected middleName(index: number): Readonly<NameComponent> {
+        if(this.middleNames.length == 0) throw new RangeError(`No middle names exist for ${this.toString()}.`);
+        if(index < 0 || index >= this.middleNames.length) throw new RangeError(`Index ${index} is out of bounds of 0 ` +
+            `- ${this.middleNames.length - 1}`);
+        return Object.freeze({...this.middleNames[index]});
     }
 
     /**
      * Returns the exact preferred name.
      */
     get preferredName(): string {
-        switch(this.preferredNameSection) {
-            case PreferredName.FIRST:
-                return this.firstName;
-            case PreferredName.LAST:
-                return this.lastName;
-            case PreferredName.NICK:
-                return this.nickName;
-            case PreferredName.FULL:
-                return `${this.firstName} ${this.lastName}`;
-            case PreferredName.MIDDLE: {
-                if(this.middleNames.length < 1) return this.nickName;
-                else return this.middleNames[0];
-            }
-            case PreferredName.FULL_NICK:
-                return `${this.firstName} \"${this.nickName}\" ${this.lastName}`;
-            case PreferredName.FULL_MIDDLE: {
-                if(this.middleNames.length < 1) return `${this.firstName} ${this.lastName}`;
-                else return `${this.firstName} ${this.middleNames[0]} ${this.lastName}`;
-            }
-            case PreferredName.FULL_NICK_MIDDLE: {
-                if(this.middleNames.length < 1) return `${this.firstName} \"${this.nickName}\" ${this.lastName}`;
-                else return `${this.firstName} \"${this.nickName}\" ${this.middleNames[0]} ${this.lastName}`;
-            }
-            default:
-                return `${this.firstName} ${this.lastName}`;
+        let names: string[] = []
+        if(this.firstName.use) names.push(this.firstName.name);
+        for(let name of this.middleNames) if(name.use) names.push(name.name);
+        if(this.nickName.use) names.push(`\"${this.nickName.name}\"`);
+        if(this.lastName.use) names.push(this.lastName.name);
+        if(names.length == 0) names.push(this.firstName.name);
+        let finalName: string = "";
+        let nameAdded: boolean = false;
+        for(let name of names) {
+            if(nameAdded) finalName += " ";
+            finalName += name;
+            nameAdded = true;
         }
+        return finalName;
     }
 
     /**
-     * Returns the full name, including the nick-name and all middle names.
+     * Returns the full name, including the nickname and all middle names.
      */
     public toString(): string {
-        if(this.firstName === this.nickName) return `${this.firstName} ${this.lastName}`;
-        else {
-            if(this.middleNames.length == 0) return `${this.firstName} \"${this.nickName}\" ${this.lastName}`;
-            let middleNames = "";
-            for(let i = 0; i < this.middleNames.length; i++) {
-                middleNames += this.middleNames[i];
-                middleNames += " ";
-            }
-            return `${this.firstName} \"${this.nickName}\" ${middleNames}${this.lastName}`;
+        let names: string[] = []
+        names.push(this.firstName.name);
+        for(let name of this.middleNames) names.push(name.name);
+        if(this.nickName != null) names.push(`\"${this.nickName.name}\"`);
+        names.push(this.lastName.name);
+        let finalName: string = "";
+        let nameAdded: boolean = false;
+        for(let name of names) {
+            if(nameAdded) finalName += " ";
+            finalName += name;
+            nameAdded = true;
         }
+        return finalName;
     }
 }

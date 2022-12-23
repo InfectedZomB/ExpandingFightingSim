@@ -17,14 +17,14 @@ export abstract class Killable implements Resettable, Stringable {
     }
 
     /**
-     * Returns whether or not the Killable is alive.
+     * Returns whether the Killable is alive.
      */
     get alive(): boolean {
         return this._alive;
     }
 
     /**
-     * Sets whether or not the killable is alive.
+     * Sets whether the killable is alive.
      * @param value The new value of life.
      */
     set alive(value: boolean) {
