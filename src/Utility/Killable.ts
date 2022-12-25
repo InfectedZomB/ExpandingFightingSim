@@ -7,13 +7,16 @@ import {Stringable} from "./Stringable";
 export abstract class Killable implements Resettable, Stringable {
 
     private _alive: boolean;
+    private _team: string;
 
     /**
      * Constructor for {@link Killable} objects.
+     * @param team The team that the Killable is on. Will not attack friendlies.
      * @protected So that only extended objects may access.
      */
-    protected constructor() {
-        this._alive = true;
+    protected constructor(team?: string, alive?: boolean) {
+        this._alive = alive ?? true;
+        this._team = team ?? "";
     }
 
     /**

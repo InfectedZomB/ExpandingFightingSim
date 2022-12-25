@@ -5,7 +5,6 @@ import {Name} from "./Name";
  * name: The string name part of a name.
  * use: Whether the string name part should be used when displaying the name.
  */
-
 export type NameComponent = {
     name: string;
     use: boolean;

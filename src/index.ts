@@ -2,6 +2,7 @@ import {ComplexName} from "./Entities/Name/ComplexName";
 import {Fighter} from "./Entities/Fighter";
 import {Match} from "./Utility/Match";
 import {Monster} from "./Entities/Monster";
+import {Team} from "./Entities/Team/Team";
 
 let skeleton = new Monster("Skeleton", 2);
 let zomb = new Fighter(new ComplexName("Zackery", "Fisher", "ZomB"));
@@ -12,3 +13,6 @@ let sol = new Fighter(new ComplexName("Sigma", "Balls", "Sol"));
 let match = new Match(zomb, zeltar, metal, sol, skeleton);
 
 while(!match.finished) match.nextTurn();
+
+let newTeam: Team = new Team();
+console.log(newTeam.id);
