@@ -1,5 +1,6 @@
 import {Resettable} from "./Resettable";
 import {Stringable} from "./Stringable";
+import {Team} from "../Entities/Team/Team";
 
 /**
  * Class for managing the ability to kill.
@@ -7,16 +8,17 @@ import {Stringable} from "./Stringable";
 export abstract class Killable implements Resettable, Stringable {
 
     private _alive: boolean;
-    private _team: string;
+    private _team: Team;
 
     /**
      * Constructor for {@link Killable} objects.
      * @param team The team that the Killable is on. Will not attack friendlies.
+     * @param alive Whether the Killable will begin alive.
      * @protected So that only extended objects may access.
      */
-    protected constructor(team?: string, alive?: boolean) {
+    protected constructor(team?: Team, alive?: boolean) {
         this._alive = alive ?? true;
-        this._team = team ?? "";
+        this._team = team ?? new Team();
     }
 
     /**
@@ -33,6 +35,39 @@ export abstract class Killable implements Resettable, Stringable {
     set alive(value: boolean) {
         this._alive = value;
     }
+
+    /**
+     * Returns the {@link Team} of the Killable.
+     */
+    get team(): Team {
+        return this._team;
+    }
+
+    /**
+     * Sets the {@link Team} of the Killable.
+     * @param value The new team.
+     */
+    set team(value: Team) {
+        this._team = value;
+    }
+
+    /**
+     * Verifies that the attacker is hostile toward the defender.
+     * @param defender The defender.
+     */
+    public verifyTarget(defender: Killable): boolean {
+        let hostileFlag = false;
+        if(this.team != defender.team) {
+            hostileFlag = true;
+            for(let ally of this.team.allies) if(ally === defender.team) hostileFlag = false;
+        }
+        return hostileFlag;
+    }
+
+    /**
+     * Returns the identifier for the Killable, typically a name and their team.
+     */
+    public abstract get identifier(): string;
 
     /**
      * Attacks an opponent.

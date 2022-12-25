@@ -1,8 +1,6 @@
 import {Killable} from "./Killable";
 import {Resettable} from "./Resettable";
 import {Stringable} from "./Stringable";
-import {Fighter} from "../Entities/Fighter";
-import {Monster} from "../Entities/Monster";
 
 /**
  * Class for managing {@link Match}es between {@link Killable} entities.
@@ -36,7 +34,7 @@ export class Match implements Resettable, Stringable {
      */
     set contestants(value: Killable[]) {
         this._contestants = value;
-        if(this.livingContestants.length < 2) this.finish();
+        if(!this.verifyMatch()) this.finish();
     }
 
     /**
@@ -44,21 +42,27 @@ export class Match implements Resettable, Stringable {
      */
     public nextTurn() {
         if(this.finished) {
-            let winner: Killable | null;
-            for(let contestant of this.contestants) if(contestant.alive) winner = contestant;
-            winner == null ?
-                console.log("The match has already ended. No winners.") :
-                console.log(`The match has already ended. Winner:\n${winner.toString()}`);
+            if(this.winners != null) {
+                if(this.winners.length == 1) console.log(`Match is already over. The winner is: ${this.winners[0].identifier}`);
+                else {
+                    console.log("Match is already over. The winners are:");
+                    for(let winner of this.winners) console.log(`\t${winner.identifier}`);
+                }
+            }
+            else console.log("Match is already over. No winner.");
         }
         else {
-            if(this.livingContestants.length >= 2) {
+            if(this.verifyMatch()) {
                 let attacker = this.livingContestants[this.turn % this.livingContestants.length];
-                let defender = this.livingContestants[(this.turn + 1) % this.livingContestants.length];
-                let attName = attacker instanceof Fighter ?
-                    ((attacker as Fighter).name.name + "\n") : ((attacker as Monster).name.name + "\n");
-                let defName = defender instanceof Fighter ?
-                    ((defender as Fighter).name.name + "\n") : ((defender as Monster).name.name + "\n");
-                console.log(`${attName}-has attacked-\n${defName}`);
+                //let defender = this.livingContestants[(this.turn + 1) % this.livingContestants.length];
+                let defender: Killable;
+                for(let i = 1; i < this.livingContestants.length; i++) {
+                    defender = this.livingContestants[(this.turn + i) % this.livingContestants.length];
+                    if(attacker.verifyTarget(defender)) break;
+                }
+                let attName = attacker.identifier;
+                let defName = defender.identifier;
+                console.log(`${attName}\n-has attacked-\n${defName}\n`);
                 attacker.attack(defender);
                 this.turn++;
             }
@@ -67,18 +71,16 @@ export class Match implements Resettable, Stringable {
     }
 
     /**
-     * Initialize the match. If there are too few contestants alive, the match will initialize finished.
+     * Initialize the match. If there are too few contestants alive or all alive contestants are friendly, the match will initialize finished.
      */
     public initialize() {
-        let livingContestants = 0;
-        for(let contestant of this.contestants) if(contestant.alive) livingContestants++;
-        if(livingContestants >= 2) {
+        if(this.verifyMatch()) {
             this.finished = false;
             this.randomizeContestantOrder();
         }
         else {
             this.finish();
-            console.log(`Cannot start a match between only ${livingContestants} living contestant(s).`)
+            console.log(`Cannot start match: ${this.livingContestants.length < 2 ? "Too few living contestants." : "All living contestants are friendly."}`);
         }
     }
 
@@ -117,10 +119,10 @@ export class Match implements Resettable, Stringable {
     }
 
     /**
-     * Returns the winner of the match. If there is no current winner, returns null.
+     * Returns the winners of the match. If there is no current winner, returns null.
      */
-    get winner(): Killable | null {
-        if(this.finished && this.livingContestants.length > 0) return this.livingContestants[0];
+    get winners(): Killable[] | null {
+        if(this.finished && this.livingContestants.length > 0) return this.livingContestants;
         else return null;
     }
 
@@ -140,8 +142,13 @@ export class Match implements Resettable, Stringable {
      */
     private finish() {
         this.finished = true;
-        if(this.winner != null) console.log(`The winner is:\n${this.winner instanceof Fighter ?
-            ((this.winner as Fighter).name.name + "\n") : ((this.winner as Monster).name.name + "\n")}`);
+        if(this.winners != null) {
+            if(this.winners.length == 1) console.log(`The winner is: ${this.winners[0].identifier}`);
+            else {
+                console.log("The winners are:");
+                for(let winner of this.winners) console.log(`\t${winner.identifier}`);
+            }
+        }
         else console.log("No winner.");
     }
 
@@ -159,6 +166,22 @@ export class Match implements Resettable, Stringable {
             contestants.splice(index, 1);
         }
         this.contestants = randomizedContestants;
+    }
+
+    /**
+     * Verifies if a match still has fighting to be done.
+     * @private Does not need to be used outside of class.
+     * @return Returns true if there is a verified target, otherwise returns false.
+     */
+    private verifyMatch(): boolean {
+        let livingContestants = this.livingContestants;
+        if(livingContestants.length < 2) return false;
+        let hostileFlag = false;
+        for(let cont of livingContestants) for(let opponent of livingContestants) {
+            hostileFlag = cont.verifyTarget(opponent);
+            if(hostileFlag == true) break;
+        }
+        return hostileFlag;
     }
 
 }

@@ -1,5 +1,6 @@
 import { ComplexName } from "./Name/ComplexName";
 import { Killable } from "../Utility/Killable";
+import { Team } from "./Team/Team";
 
 /**
  * Class for managing {@link Object}s of {@link Fighter} type. Fighters attack each other. Last fighter alive wins.
@@ -11,9 +12,11 @@ export class Fighter extends Killable {
     /**
      * Creates a new {@link Object} of {@link Fighter} type.
      * @param name The {@link Fighter}'s {@link ComplexName}.
+     * @param team The team the fighter is on.
+     * @param alive Whether the fighter begins alive.
      */
-    public constructor(name: ComplexName) {
-        super();
+    public constructor(name: ComplexName, team?: Team, alive?: boolean) {
+        super(team ?? new Team(), alive ?? true);
         this._name = name;
     }
 
@@ -30,6 +33,10 @@ export class Fighter extends Killable {
      */
     set name(value: ComplexName) {
         this._name = value;
+    }
+
+    public get identifier(): string {
+        return `${this.name.name} of the ${this.team.id}`
     }
 
     /**
@@ -64,7 +71,7 @@ export class Fighter extends Killable {
     public kill() {
         if(this.alive) {
             this.alive = false;
-            console.log(`${this.name.name} has died.\n`);
+            console.log(`${this.identifier} has died.\n`);
         }
     }
 
