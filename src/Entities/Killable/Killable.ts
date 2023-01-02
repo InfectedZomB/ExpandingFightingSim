@@ -1,24 +1,28 @@
-import {Resettable} from "./Resettable";
-import {Stringable} from "./Stringable";
-import {Team} from "../Entities/Team/Team";
+import {IResettable} from "../../Utility/IResettable";
+import {IStringable} from "../../Utility/IStringable";
+import {Team} from "../Team/Team";
+import {Style} from "../../Utility/Style";
 
 /**
  * Class for managing the ability to kill.
  */
-export abstract class Killable implements Resettable, Stringable {
+export abstract class Killable implements IResettable, IStringable {
 
     private _alive: boolean;
     private _team: Team;
+    private _style: Style;
 
     /**
      * Constructor for {@link Killable} objects.
      * @param team The team that the Killable is on. Will not attack friendlies.
      * @param alive Whether the Killable will begin alive.
+     * @param style The style associated to the Killable.
      * @protected So that only extended objects may access.
      */
-    protected constructor(team?: Team, alive?: boolean) {
+    protected constructor(team?: Team, alive?: boolean, style?: Style) {
         this._alive = alive ?? true;
         this._team = team ?? new Team();
+        this._style = style ?? new Style();
     }
 
     /**
@@ -49,6 +53,21 @@ export abstract class Killable implements Resettable, Stringable {
      */
     set team(value: Team) {
         this._team = value;
+    }
+
+    /**
+     * The style of the killable.
+     */
+    get style(): Style {
+        return this._style;
+    }
+
+    /**
+     * Sets the {@link Style} of the killable.
+     * @param value The new ColorStyle.
+     */
+    set style(value: Style) {
+        this._style = value;
     }
 
     /**

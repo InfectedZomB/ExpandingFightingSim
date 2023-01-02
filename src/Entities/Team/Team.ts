@@ -1,5 +1,8 @@
 import adj from './adj.json';
 import noun from './noun.json';
+import {Style} from "../../Utility/Style";
+import {Color} from "../../Utility/Color";
+
 //import test from './test.json';
 
 /**
@@ -14,6 +17,7 @@ export class Team {
 
     private _allies: Team[];
     private _id: string;
+    private _style: Style;
 
     /**
      * Constructor for the {@link Team} class
@@ -25,6 +29,9 @@ export class Team {
         this.ensureUniqueID();
         this._allies = allies;
         Team.teams.push(this);
+        id === "Monsters" ?
+            this._style = new Style(null, new Color(255, 0, 0)) :
+            this._style = new Style();
     }
 
     /**
@@ -100,7 +107,7 @@ export class Team {
      * Gets the ID of the team.
      */
     public get id(): string {
-        return this._id;
+        return Style.styledString(this._id, this._style);
     }
 
     /**
@@ -124,6 +131,21 @@ export class Team {
      */
     public set allies(value: Team[]) {
         this._allies = value;
+    }
+
+    /**
+     * The style values of the team.
+     */
+    public get style(): Style {
+        return this._style;
+    }
+
+    /**
+     * Sets the style values of the team.
+     * @param value The new ColorStyle
+     */
+    public set style(value: Style) {
+        this._style = value;
     }
 
     /**

@@ -1,6 +1,8 @@
-import {Killable} from "../Utility/Killable";
-import {SimpleName} from "./Name/SimpleName";
-import {Team} from "./Team/Team";
+import {Killable} from "./Killable";
+import {SimpleName} from "../Name/SimpleName";
+import {Team} from "../Team/Team";
+import {Style} from "../../Utility/Style";
+import {Color} from "../../Utility/Color";
 
 /**
  * Class for managing a simple type of Killable that has a name and simple health value.
@@ -76,8 +78,8 @@ export class Monster extends Killable {
      * Returns the identifier for the Monster as a string: <Name> <Team ID>
      */
     public get identifier() {
-        if(this.team === Team.monsterTeam) return this.name.name
-        else return `${this.name.name} of the ${this.team.id}`
+        if(this.team === Team.monsterTeam) return `${Style.styledString(this.name.name, new Style("b", new Color(255, 0, 0)))}`;
+        else return `${Style.styledString(this.name.name, this.style)} of the ${this.team.id}`;
     }
 
     /**

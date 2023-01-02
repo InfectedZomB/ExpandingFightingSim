@@ -1,11 +1,11 @@
-import {Killable} from "./Killable";
-import {Resettable} from "./Resettable";
-import {Stringable} from "./Stringable";
+import {Killable} from "../Entities/Killable/Killable";
+import {IResettable} from "./IResettable";
+import {IStringable} from "./IStringable";
 
 /**
  * Class for managing {@link Match}es between {@link Killable} entities.
  */
-export class Match implements Resettable, Stringable {
+export class Match implements IResettable, IStringable {
 
     private _contestants: Killable[];
     private turn: number;

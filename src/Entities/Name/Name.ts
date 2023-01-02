@@ -1,9 +1,9 @@
-import {Stringable} from "../../Utility/Stringable";
+import {IStringable} from "../../Utility/IStringable";
 
 /**
  * Class for ensuring all name types can simply get a name.
  */
-export abstract class Name implements Stringable {
+export abstract class Name implements IStringable {
 
     /**
      * Returns name.

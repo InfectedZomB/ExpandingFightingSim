@@ -1,6 +1,7 @@
-import { ComplexName } from "./Name/ComplexName";
-import { Killable } from "../Utility/Killable";
-import { Team } from "./Team/Team";
+import {ComplexName} from "../Name/ComplexName";
+import {Killable} from "./Killable";
+import {Team} from "../Team/Team";
+import {Style} from "../../Utility/Style";
 
 /**
  * Class for managing {@link Object}s of {@link Fighter} type. Fighters attack each other. Last fighter alive wins.
@@ -16,7 +17,7 @@ export class Fighter extends Killable {
      * @param alive Whether the fighter begins alive.
      */
     public constructor(name: ComplexName, team?: Team, alive?: boolean) {
-        super(team ?? new Team(), alive ?? true);
+        super(team ?? new Team(), alive ?? true, new Style("b"));
         this._name = name;
     }
 
@@ -36,7 +37,7 @@ export class Fighter extends Killable {
     }
 
     public get identifier(): string {
-        return `${this.name.name} of the ${this.team.id}`
+        return `${Style.styledString(this.name.name, this.style)} of the ${this.team.id}`;
     }
 
     /**
